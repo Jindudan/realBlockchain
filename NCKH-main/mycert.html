@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="./assets/css/mycert.css">
+    <link rel="stylesheet" href="./assets/css/grid.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>My Certificate</title>
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"
+  ></script>
+  <style>
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .header{
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    .header__logo{
+
+    }
+    .header__logo-link{
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    .header__logo-img{
+        width: 150px;
+        height: auto;
+    }
+    .header__search{
+        width: 700px;
+        height: 50px;
+        border: solid 1.5px #0E99FF;
+    }
+    .header__search-input{
+        width: 90%;
+        height: 100%;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        padding: 0 16px;
+    }
+    .header__search-btn{
+        height: 40px;
+        width: 60px;
+        background-color: #0E99FF;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 2px;
+    }
+    .header__search-icon{
+        color: #fff;
+        font-size: 16px;
+    }
+
+    .user{
+
+    }
+    .user__icon{
+        text-decoration: none;
+        padding: 10px;
+        margin: 0 5px;
+    }
+    .user__icon--link{
+        color: #0E99FF;
+        font-size: 30px;
+    }
+    .user__icon--link:hover{
+        color: #0A426E;
+    }
+
+    .header__nav{
+        display: block;
+        width: 100%;
+        height: 70px;
+        background-color: #0E99FF;
+    }
+
+    .header__nav-list{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        list-style: none;
+    }
+    .header__nav-item{
+        height: 100%;
+        width: 180px;
+    }
+
+    .header__nav-item:hover{
+        background-color: #0A426E;
+    }
+
+    .header__nav-item--link{
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        display: block;
+        width: 100%;
+        height: 100%;
+        line-height: 70px;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+    <script>
+        //1- connect metamask
+        let account;
+        const connectMetamask = async () => {
+          if (window.ethereum !== "undefined") {
+            const accounts = await ethereum.request({
+              method: "eth_requestAccounts",
+            });
+            account = accounts[0];
+            document.getElementById("accountArea").innerHTML = account;
+          }
+        };
+  
+        //2- connect to smart contract
+        const connectContract = async () => {
+          const ABI = [
+          {
+              "inputs": [],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+          },
+          {
+              "anonymous": false,
+              "inputs": [
+                  {
+                      "indexed": false,
+                      "internalType": "address",
+                      "name": "studentAddress",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                  }
+              ],
+              "name": "savedStudent",
+              "type": "event"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "uint256",
+                      "name": "_id",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_name",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_major",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_university",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "_graduationYear",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "addCertificate",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "string",
+                      "name": "_name",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint16",
+                      "name": "_age",
+                      "type": "uint16"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_university",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_majors",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_course",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_phone",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_email",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "_birth",
+                      "type": "string"
+                  }
+              ],
+              "name": "addStudent",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "uint256",
+                      "name": "",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "certificates",
+              "outputs": [
+                  {
+                      "internalType": "uint256",
+                      "name": "id",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "major",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "university",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "graduationYear",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "bool",
+                      "name": "isIssued",
+                      "type": "bool"
+                  }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "uint256",
+                      "name": "_id",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "getCertificateById",
+              "outputs": [
+                  {
+                      "internalType": "uint256",
+                      "name": "",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "bool",
+                      "name": "",
+                      "type": "bool"
+                  }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "address",
+                      "name": "_address",
+                      "type": "address"
+                  }
+              ],
+              "name": "getStudentByAddress",
+              "outputs": [
+                  {
+                      "internalType": "string",
+                      "name": "",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "",
+                      "type": "uint256"
+                  },
+                  {
+                      "internalType": "uint256[]",
+                      "name": "certificateIds",
+                      "type": "uint256[]"
+                  }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "address",
+                      "name": "_studentAddress",
+                      "type": "address"
+                  },
+                  {
+                      "internalType": "uint256",
+                      "name": "_certificateId",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "issueCertificate",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "inputs": [
+                  {
+                      "internalType": "address",
+                      "name": "",
+                      "type": "address"
+                  }
+              ],
+              "name": "students",
+              "outputs": [
+                  {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "uint16",
+                      "name": "age",
+                      "type": "uint16"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "university",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "majors",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "course",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "phone",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "email",
+                      "type": "string"
+                  },
+                  {
+                      "internalType": "string",
+                      "name": "birth",
+                      "type": "string"
+                  }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+          }
+      ];
+          const Address = "0x3D00FfdFCdA3c4f30eBF6a7b1C47b05B6DA2A0a4";
+          window.web3 = await new Web3(window.ethereum);
+          window.contract = await new window.web3.eth.Contract(ABI, Address);
+          // document.getElementById("contractArea").innerHTML = "connected to smart contract";
+        };
+  
+       
+  
+        //3-read data from smart contract
+       /* const registerSetInfo = async () => {
+          let myEntry = [];
+          myEntry.push(document.getElementById("newInfo").value);
+          myEntry.push(document.getElementById("newInfo1").value);
+          await window.contract.methods.setInfo(myEntry).send({ from: account });
+        };
+  
+       /* const registerGetInfo = async () => {
+          const data = await window.contract.methods.getInfo().call();
+          for (let i = 0; i < data.length; i++) {
+            document.getElementById("lastInfo").innerHTML = data[0];
+            document.getElementById("lastInfo1").innerHTML = data[1];
+          
+          }
+        };*/
+      </script>
+  
+      <button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+      <p id="accountArea"></p>
+      <button onclick="connectContract()">CONNECT TO CONTRACT</button> <br>
+      <p id="contractArea"></p>
+        <p id="accountArea"></p>
+
+    <div class="header">
+        <div class="header__logo">
+            <a href="/" class="header__logo-link">
+                <img src="./assets/image/logo_Black.png" alt="" class="header__logo-img">
+            </a>
+        </div>
+
+        <div class="header__search">
+            <input id="idGet" type="text" class="header__search-input" placeholder="Nhập để tìm kiếm">
+            <button onclick="getCert()" class="header__search-btn">
+                <i class="fa-solid fa-magnifying-glass header__search-icon"></i>
+            </button>
+        </div>
+
+        <div class="user">
+            <a href="login.html" class="user__icon">
+                <i class="fa-solid fa-user user__icon--link"></i>   
+            </a>
+            <a href="" class="user__icon">
+                <i class="fa-solid fa-bell user__icon--link"></i>
+            </a>
+            
+        </div>
+    </div>
+
+    <div class="header__nav">
+        <ul class="header__nav-list">
+            <li class="header__nav-item">
+                <a href="index.html" class="header__nav-item--link">Trang chủ</a>
+            </li>
+
+            <li class="header__nav-item">
+                <a href="mycert.html" class="header__nav-item--link">Chứng chỉ của tôi</a>
+            </li>
+
+            <li class="header__nav-item">
+                <a href="" class="header__nav-item--link">My CV</a>
+            </li>
+
+            <li class="header__nav-item">
+                <a href="addcert.html" class="header__nav-item--link">Phát hành chứng chỉ</a>
+            </li>
+
+            <li class="header__nav-item">
+                <a href="" class="header__nav-item--link">Hỗ trợ</a>
+            </li>
+
+            <li class="header__nav-item">
+                <a href="user.html" class="header__nav-item--link">Thông tin cá nhân</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="grid wide cert__wrap">
+        <div class="row mt30 cert_custom">
+            <div class="col l-4">
+                <img src="./assets/image/toeic.jpg" alt="" class="cert__img">
+            </div>
+            <div class="col l-8">
+                <div class="cert__info-wrap">
+                    <div class="cert__info">
+                        <h1 id="name" class="cert__name">TOEIC ETS</h1>
+                        <p id="id" class="cert__id">ID: ENG11111</p>
+                        <p id="major" class="cert__receiver">Họ tên: Đinh Tường Văn</p>
+                        <p id="graduationYear" class="cert__date">Ngày phát hành: 22-08-2023</p>
+                        <p id="university" class="cert__outdate">Ngày hết hạn: 22-08-2025</p>
+                        <p class="cert__rank">Xếp loại: 880</p>
+                        <p class="cert__issuer">Đơn vị phát hành: ETS</p>
+                        <p class="cert__status">Trạng thái: <span>Đang phát hành</span></p>
+                    </div>
+                    <a href="" class="cert__code">Nhận mã chứng chỉ</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt30 cert_custom">
+            <div class="col l-4">
+                <img src="./assets/image/ielts.jpg" alt="" class="cert__img">
+            </div>
+            <div class="col l-8">
+                <div class="cert__info-wrap">
+                    <div class="cert__info">
+                        <h1 class="cert__name">IELTS</h1>
+                        <p class="cert__id">ID: ENG22222</p>
+                        <p class="cert__receiver">Họ tên: Đinh Tường Văn</p>
+                        <p class="cert__date">Ngày phát hành: 22-08-2023</p>
+                        <p class="cert__outdate">Ngày hết hạn: 22-08-2025</p>
+                        <p class="cert__rank">Xếp loại: 7.5 Overall</p>
+                        <p class="cert__issuer">Đơn vị phát hành: IDP</p>
+                        <p class="cert__status">Trạng thái: <span>Đang phát hành</span></p>
+                    </div>
+                    <a href="" class="cert__code">Nhận mã chứng chỉ</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt30 mb30 cert_custom">
+            <div class="col l-4">
+                <img src="./assets/image/TN.png" alt="" class="cert__img ">
+            </div>
+            <div class="col l-8">
+                <div class="cert__info-wrap">
+                    <div class="cert__info">
+                        <h1 class="cert__name">GRADUATION DEGREE</h1>
+                        <p class="cert__id">ID: TN11111</p>
+                        <p class="cert__receiver">Họ tên: Đinh Tường Văn</p>
+                        <p class="cert__date">Ngày phát hành: 22-08-2023</p>
+                        <p class="cert__outdate">Ngày hết hạn: 22-08-2025</p>
+                        <p class="cert__rank">Xếp loại: Giỏi</p>
+                        <p class="cert__issuer">Đơn vị phát hành: Trường Đại học Kinh Tế - Luật</p>
+                        <p class="cert__status">Trạng thái: <span>Đang phát hành</span></p>
+                    </div>
+                    <a href="" class="cert__code">Nhận mã chứng chỉ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p w3-include-html="footer.html"></p>
+    <script>
+        w3.includeHTML();
+
+        const getCert = async () => {
+
+
+            const ABI = [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "studentAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    }
+                ],
+                "name": "savedStudent",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_major",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_university",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_graduationYear",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "addCertificate",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint16",
+                        "name": "_age",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_university",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_majors",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_course",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_phone",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_email",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "_birth",
+                        "type": "string"
+                    }
+                ],
+                "name": "addStudent",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "certificates",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "major",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "university",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "graduationYear",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isIssued",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_id",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getCertificateById",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "getStudentByAddress",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256[]",
+                        "name": "certificateIds",
+                        "type": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_studentAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_certificateId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "issueCertificate",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "students",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint16",
+                        "name": "age",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "university",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "majors",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "course",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "phone",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "email",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "birth",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+            const Address = "0x3D00FfdFCdA3c4f30eBF6a7b1C47b05B6DA2A0a4";
+            window.web3 = await new Web3(window.ethereum);
+            window.contract = await new window.web3.eth.Contract(ABI, Address);
+            let _idGet, _id1, _name1, _major1, _university1, _graduationYear1;
+            _idGet = document.getElementById("idGet").value;
+            
+
+            
+            const data = await window.contract.methods.certificates(_idGet).call();
+
+            document.getElementById("id").innerHTML = data[0];
+            document.getElementById("name").innerHTML = data[1];
+            document.getElementById("major").innerHTML = data[2];
+            document.getElementById("graduationYear").innerHTML = data[3];
+            document.getElementById("university").innerHTML = data[4];
+
+
+
+        }
+    </script>
+</body>
+</html>
